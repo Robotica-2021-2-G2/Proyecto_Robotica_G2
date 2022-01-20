@@ -82,10 +82,48 @@ end
 
 %% Parte 2
 % Pose seleccionada: T1
+syms q1 q2 q3 q4 q5 q6
+assume([q1 q2 q3 q4 q5 q6],'real')
+A_0_1 = L(1).A(q1);
+A_1_2 = L(2).A(q2);
+A_2_3 = L(3).A(q3);
+A_3_4 = L(4).A(q4);
+A_4_5 = L(5).A(q5);
+A_5_6 = L(6).A(q6);
+
+T_0_tcp = A_0_1*A_1_2*A_2_3*A_3_4*A_4_5*A_5_6*A_tool;
+
+x = T_0_tcp(1,4);
+y = T_0_tcp(2,4);
+z = T_0_tcp(3,4);
+
+R = T_0_tcp(1:3,1:3);
+
+r1 = R(1,:);
+r2 = R(2,:);
+r3 = R(3,:);
+
+fila1 = [diff(x,q1) diff(x,q2) diff(x,q3) diff(x,q4) diff(x,q5) diff(x,q6)];
+fila2 = [diff(y,q1) diff(y,q2) diff(y,q3) diff(y,q4) diff(y,q5) diff(y,q6)];
+fila3 = [diff(z,q1) diff(z,q2) diff(z,q3) diff(z,q4) diff(z,q5) diff(z,q6)];
+
+% obtenemos filas a partir del despeje de las componentes de la velocidad
+% angular
+r1_t = r1';
+r2_t = r2';
+r3_t = r3';
+fila4 = r2*[diff(r3_t,q1) diff(r3_t,q2) diff(r3_t,q3) diff(r3_t,q4) diff(r3_t,q5) diff(r3_t,q6)];
+fila5 = r3*[diff(r1_t,q1) diff(r1_t,q2) diff(r1_t,q3) diff(r1_t,q4) diff(r1_t,q5) diff(r1_t,q6)];
+fila6 = r1*[diff(r2_t,q1) diff(r2_t,q2) diff(r2_t,q3) diff(r2_t,q4) diff(r2_t,q5) diff(r2_t,q6)];
+
+J_manual = [fila1;fila2;fila3;fila4;fila5;fila6];
+J_manual = double(subs(J_manual,[q1 q2 q3 q4 q5 q6],conf1))
+
 J_auto = robot_1.jacob0(conf1)
 
+%%
 % Velocidades de articulación
 Vh = [0.1;0.2;0.05]; %mm/s
 omega_h = [5;10;-5]; %rad/s
 
-q_punto = J_auto\[Vh;omega_h] %rad/s
+q_punto = J_manual\[Vh;omega_h] %rad/s
