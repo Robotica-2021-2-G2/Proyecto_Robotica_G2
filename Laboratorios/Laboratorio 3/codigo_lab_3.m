@@ -1,3 +1,4 @@
+%% Creación del robot con Peter Corke
 % Longitudes en m
 L1 = 0.245;
 L2 = 0.300;
@@ -7,7 +8,6 @@ L5 = 0.540;
 L6 = 0.150;
 L7 = 0.160;
 
-%% Peter Corke
 L(1) = Link('revolute','a',0,'alpha',0,'d',L1,'offset',0,'modified','qlim',[-pi,pi]);
 L(2) = Link('revolute','a',0,'alpha',pi/2,'d',-L2,'offset',pi/2,'modified','qlim',[-pi,pi]);
 L(3) = Link('revolute','a',L3,'alpha',pi,'d',-L4,'offset',0,'modified','qlim',[-3*pi/2,3*pi/2]);
@@ -19,66 +19,18 @@ A_tool = transl(0,0,-L7)*round(trotx(pi),2);
 robot_1 = SerialLink(L,'name','CRX-10iA');
 robot_1.tool = A_tool;
 
-%% Trajectory planning
+%% Parte 1 Trajectory planning
+%Definición del plano mediante una matriz de transformación
+Tplano = transl(-alcance/2,0.5*alcance,0.5)*trotx(-45,'deg')*troty(pi);
+
 alcance = 1.249;
 L_traj_1 = 0.4*alcance;
 L_traj_2 = 0.5*L_traj_1;
 
-vector = [0 1 1];
-Tplano = trotx(-45,'deg');
-
-p1 = [0 0 0.5];
-p1_5 = [L_traj_1/2 0 0.5];
-p2 = [L_traj_1 0 0.5];
-p3 = [L_traj_1 L_traj_2 0.5];
-p3_5 = [L_traj_1/2 L_traj_2 0.5];
-p4 = [0 L_traj_2 0.5];
-
-% Poses a partir de puntos
-
-% En plano XY
-T1= transl(p1+[-alcance/4,0.3*alcance,0])*troty(pi);
-T1_5 = transl(p1_5+[-alcance/4,0.3*alcance,0])*troty(pi);
-T2= transl(p2+[-alcance/4,0.3*alcance,0])*troty(pi);
-T3= transl(p3+[-alcance/4,0.3*alcance,0])*troty(pi);
-T3_5 = transl(p3_5+[-alcance/4,0.3*alcance,0])*troty(pi);
-T4= transl(p4+[-alcance/4,0.3*alcance,0])*troty(pi);
-
-% En plano [0,1,1]
-T1 = Tplano*T1;
-T1_5 = Tplano*T1_5;
-T2 = Tplano*T2;
-T3 = Tplano*T3;
-T3_5 = Tplano*T3_5;
-T4 = Tplano*T4;
-
-% Cinemática inversa para cada punto
-conf1 = robot_1.ikunc(T1);
-conf1_5 = robot_1.ikunc(T1_5);
-conf2 = robot_1.ikunc(T2);
-conf3 = robot_1.ikunc(T3);
-conf3_5 = robot_1.ikunc(T3_5);
-conf4 = robot_1.ikunc(T4);
-
-tseg = [1,1,1,1,1,1];
-q0 = conf1;
-dt = 0.1;
-p = [conf1_5;conf2;conf3;conf3_5;conf4;conf1];
-tacc = 1/6*tseg;
-
-traj = mstraj(p,[],tseg,q0,dt,tacc);
-
-figure()
-view([154,21])
-xlim([-2 1])
-ylim([-0.5 2])
-zlim([-1 1])
-hold on
-for i=1:length(traj)  
-    punto = robot_1.fkine(traj(i,:));
-    plot3(punto(1,4),punto(2,4),punto(3,4),'c.')
-    robot_1.plot(traj(i,:))
-end
+p1 = [0 0 0];
+p2 = [L_traj_1 0 0];
+p3 = [L_traj_1 L_traj_2 0];
+p4 = [0 L_traj_2 0];
 
 %% Parte 2
 % Pose seleccionada: T1
@@ -121,9 +73,137 @@ J_manual = double(subs(J_manual,[q1 q2 q3 q4 q5 q6],conf1))
 
 J_auto = robot_1.jacob0(conf1)
 
-%%
 % Velocidades de articulación
 Vh = [0.1;0.2;0.05]; %mm/s
 omega_h = [5;10;-5]; %rad/s
 
 q_punto = J_manual\[Vh;omega_h] %rad/s
+%% Parte 3 - Integración
+% 1
+
+% 2
+
+%Cálculo del perímetro
+%Segmentos rectos
+r = 0.05;
+d1 = abs(p2(1) - p1(1)) - 2*r;
+d2 = abs(p3(2) - p2(2)) - 2*r;
+d3 = abs(p4(1) - p3(1)) - 2*r;
+d4 = abs(p1(2) - p4(2)) - 2*r;
+%Cuarto de circunferencia para cada esquina
+s = pi/2 * r ;
+%Centros de las circunferencias
+c1 = p1 + [r r 0];
+c2 = p2 + [-r r  0];
+c3 = p3 + [-r -r  0];
+c4 = p4 + [r -r  0];
+perimetro = d1 + d2 + d3 + d4 + 4*s;
+%Cálculo del paso entre punto y punto
+total_puntos = 60;
+paso = perimetro / total_puntos;
+paso_rad = paso / r;
+
+
+traj_d1 = [p1(1)+r:paso:p2(1)-r]'
+zeros_ = zeros(length(traj_d1),1)
+traj_d1 = [traj_d1, zeros_+p1(2), zeros_]
+
+angulos = (-pi/2:paso_rad:0)'
+angulos = angulos(2:end,:)
+zeros_ = zeros(length(angulos),1)
+traj_s1 = [traj_d1(end,1) + r*cos(angulos), traj_d1(end,2)+ r*sin(angulos) + r,zeros_]
+
+
+
+p2 = traj_s1(end,:) - [0 r 0]
+traj_d2 = [p2(2)+r:paso:p3(2)-r]'
+zeros_ = zeros(length(traj_d2),1)
+traj_d2 = [zeros_+p2(1),traj_d2, zeros_]
+
+angulos = (0:paso_rad:pi/2)'
+angulos = angulos(2:end,:)
+zeros_ = zeros(length(angulos),1)
+traj_s2 = [traj_d2(end,1) - r + r*cos(angulos),traj_d2(end,2)+ r*sin(angulos),zeros_]
+
+p3 = traj_s2(end,:) + [r 0 0]
+traj_d3 = [p3(1)-r:-paso:p4(1)+r]'
+zeros_ = zeros(length(traj_d3),1)
+traj_d3 = [traj_d3, zeros_+p3(2), zeros_]
+
+angulos = (pi/2:paso_rad:pi)'
+angulos = angulos(2:end,:)
+zeros_ = zeros(length(angulos),1)
+traj_s3 = [traj_d3(end,1) + r*cos(angulos),traj_d3(end,2)+ r*sin(angulos)-r,zeros_]
+
+
+p4 = traj_s3(end,:) + [0 r 0]
+
+traj_d4 = [p4(2)-r:-paso:p1(2)+r- paso]'
+zeros_ = zeros(length(traj_d4),1)
+traj_d4 = [zeros_+p4(1),traj_d4, zeros_]
+
+angulos = (pi:paso_rad:3*pi/2)'
+angulos = angulos(2:end,:)
+zeros_ = zeros(length(angulos),1)
+traj_s4 = [traj_d4(end,1) + r*cos(angulos) + r, traj_d4(end,2)+ r*sin(angulos) ,zeros_]
+
+
+trayectoria = [traj_d1;
+    traj_s1;
+    traj_d2;
+    traj_s2;
+    traj_d3;
+    traj_s3;
+    traj_d4;
+    traj_s4];
+figure()
+scatter(trayectoria(:,1),trayectoria(:,2))
+xlabel("x [m]")
+ylabel("y [m]")
+title("Trayectoria planteada sobre el plano XY")
+% 3 
+
+configuraciones = zeros(length(trayectoria),6);
+for i=1:length(trayectoria)
+    T= Tplano*transl(trayectoria(i,:));
+    configuraciones(i,:) = robot_1.ikunc(T);
+end
+
+figure()
+hold on
+for i=1:6
+    plot(configuraciones(:,i))
+end
+grid()
+legend(["q1","q2","q3","q4","q5","q6"])
+xlabel("Viapoint")
+ylabel("posición articular [rad]")
+title("Configuraciones durante la trayectoria")
+
+% 4
+
+
+
+
+%% Resultado
+
+configuraciones = zeros(length(trayectoria),6)
+puntos = zeros(length(trayectoria),3)
+for i=1:length(trayectoria)
+    T= transl(trayectoria(i,:));
+    T = Tplano*T;
+    conf = robot_1.ikunc(T);
+    puntos(i,:) = T(1:3,4)
+    configuraciones(i,:) = conf
+end
+
+figure()
+view([154,21])
+xlim([-2 1])
+ylim([-0.5 2])
+zlim([-1 1])
+hold on
+for i=1:length(configuraciones)  
+    plot3(puntos(i,1),puntos(i,2),puntos(i,3),'c.')
+    robot_1.plot(configuraciones(i,:))
+end
