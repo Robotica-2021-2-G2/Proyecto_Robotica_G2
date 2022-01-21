@@ -21,9 +21,9 @@ robot_1.tool = A_tool;
 
 %% Parte 1 Trajectory planning
 %Definición del plano mediante una matriz de transformación
-alcance = 1.249;
-
 Tplano = transl(-alcance/2,0.5*alcance,0.5)*trotx(-45,'deg')*troty(pi);
+
+alcance = 1.249;
 L_traj_1 = 0.4*alcance;
 L_traj_2 = 0.5*L_traj_1;
 
@@ -33,10 +33,7 @@ p3 = [L_traj_1 L_traj_2 0];
 p4 = [0 L_traj_2 0];
 
 %% Parte 2
-% Pose seleccionada: T1 (correspondiente al punto p1)
-
-T1 = Tplano*transl(p1);
-conf1 = robot_1.ikunc(T1);
+% Pose seleccionada: T1
 syms q1 q2 q3 q4 q5 q6
 assume([q1 q2 q3 q4 q5 q6],'real')
 A_0_1 = L(1).A(q1);
@@ -112,39 +109,39 @@ zeros_ = zeros(length(traj_d1),1);
 traj_d1 = [traj_d1, zeros_+p1(2), zeros_];
 
 angulos = (-pi/2:paso_ang:0)';
-angulos = angulos(2:end,:);
 zeros_ = zeros(length(angulos),1);
 traj_s1 = [traj_d1(end,1) + r*cos(angulos), traj_d1(end,2)+ r*sin(angulos) + r,zeros_];
 
 p2 = traj_s1(end,:) - [0 r 0];
+traj_s1 = traj_s1(2:end-1,:);
 traj_d2 = [p2(2)+r:paso:p3(2)-r]';
 zeros_ = zeros(length(traj_d2),1);
 traj_d2 = [zeros_+p2(1),traj_d2, zeros_];
 
 angulos = (0:paso_ang:pi/2)';
-angulos = angulos(2:end,:);
 zeros_ = zeros(length(angulos),1);
 traj_s2 = [traj_d2(end,1) - r + r*cos(angulos),traj_d2(end,2)+ r*sin(angulos),zeros_];
 
 p3 = traj_s2(end,:) + [r 0 0];
+traj_s2 = traj_s2(2:end-1,:);
 traj_d3 = [p3(1)-r:-paso:p4(1)+r]';
 zeros_ = zeros(length(traj_d3),1);
 traj_d3 = [traj_d3, zeros_+p3(2), zeros_];
 
 angulos = (pi/2:paso_ang:pi)';
-angulos = angulos(2:end,:);
 zeros_ = zeros(length(angulos),1);
 traj_s3 = [traj_d3(end,1) + r*cos(angulos),traj_d3(end,2)+ r*sin(angulos)-r,zeros_];
 
 p4 = traj_s3(end,:) + [0 r 0];
+traj_s3 = traj_s3(2:end-1,:);
 traj_d4 = [p4(2)-r:-paso:p1(2)+r- paso]';
 zeros_ = zeros(length(traj_d4),1);
 traj_d4 = [zeros_+p4(1),traj_d4, zeros_];
 
 angulos = (pi:paso_ang:3*pi/2)';
-angulos = angulos(2:end,:);
 zeros_ = zeros(length(angulos),1);
 traj_s4 = [traj_d4(end,1) + r*cos(angulos) + r, traj_d4(end,2)+ r*sin(angulos) ,zeros_];
+traj_s4 = traj_s4(2:end-1,:);
 
 trayectoria = [traj_d1; traj_s1; traj_d2; traj_s2; traj_d3; traj_s3; traj_d4; traj_s4];
 
@@ -174,7 +171,7 @@ end
 grid()
 legend(["q1","q2","q3","q4","q5","q6"])
 xlabel("Viapoint")
-ylabel("posición articular [rad]")
+ylabel("Posición articular [rad]")
 title("Configuraciones durante la trayectoria")
 
 % 4
@@ -183,6 +180,8 @@ title("Configuraciones durante la trayectoria")
 
 
 %% Resultado
+
+
 puntos = zeros(length(trayectoria),3);
 for i=1:length(trayectoria)
     T= Tplano*transl(trayectoria(i,:));
@@ -194,34 +193,8 @@ view([154,21])
 xlim([-2 1])
 ylim([-0.5 2])
 zlim([-1 1])
-
 hold on
 for i=1:length(configuraciones)  
     plot3(puntos(i,1),puntos(i,2),puntos(i,3),'c.')
     robot_1.plot(configuraciones(i,:))
 end
-
-
-%% Velocidades articulares
-normV = 0.5; %m/s
-omega = [0;0;0];
-
-velocidades = zeros(length(configuraciones),6);
-
-for i = 1:length(velocidades)
-    if i == 60
-       vector = trayectoria(i,:) - trayectoria(i-1,:); 
-    else
-        
-        vector = trayectoria(i+1,:) - trayectoria(i,:);
-    end
-    vector = vector/norm(vector)
-    vel = normV*vector';
-    
-    conf = configuraciones(i,:);
-    J = robot_1.jacob0(conf);
-    
-    q_dot = J\[vel;omega];
-    velocidades(i,:) = q_dot';
-end
-
