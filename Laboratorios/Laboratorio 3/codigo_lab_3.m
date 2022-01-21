@@ -101,74 +101,68 @@ perimetro = d1 + d2 + d3 + d4 + 4*s;
 %Cálculo del paso entre punto y punto
 total_puntos = 60;
 paso = perimetro / total_puntos;
-paso_rad = paso / r;
+paso_ang = paso / r;
 
+%Diseño de segmentos rectos y curvos
+traj_d1 = [p1(1)+r:paso:p2(1)-r]';
+zeros_ = zeros(length(traj_d1),1);
+traj_d1 = [traj_d1, zeros_+p1(2), zeros_];
 
-traj_d1 = [p1(1)+r:paso:p2(1)-r]'
-zeros_ = zeros(length(traj_d1),1)
-traj_d1 = [traj_d1, zeros_+p1(2), zeros_]
+angulos = (-pi/2:paso_ang:0)';
+angulos = angulos(2:end,:);
+zeros_ = zeros(length(angulos),1);
+traj_s1 = [traj_d1(end,1) + r*cos(angulos), traj_d1(end,2)+ r*sin(angulos) + r,zeros_];
 
-angulos = (-pi/2:paso_rad:0)'
-angulos = angulos(2:end,:)
-zeros_ = zeros(length(angulos),1)
-traj_s1 = [traj_d1(end,1) + r*cos(angulos), traj_d1(end,2)+ r*sin(angulos) + r,zeros_]
+p2 = traj_s1(end,:) - [0 r 0];
+traj_d2 = [p2(2)+r:paso:p3(2)-r]';
+zeros_ = zeros(length(traj_d2),1);
+traj_d2 = [zeros_+p2(1),traj_d2, zeros_];
 
+angulos = (0:paso_ang:pi/2)';
+angulos = angulos(2:end,:);
+zeros_ = zeros(length(angulos),1);
+traj_s2 = [traj_d2(end,1) - r + r*cos(angulos),traj_d2(end,2)+ r*sin(angulos),zeros_];
 
+p3 = traj_s2(end,:) + [r 0 0];
+traj_d3 = [p3(1)-r:-paso:p4(1)+r]';
+zeros_ = zeros(length(traj_d3),1);
+traj_d3 = [traj_d3, zeros_+p3(2), zeros_];
 
-p2 = traj_s1(end,:) - [0 r 0]
-traj_d2 = [p2(2)+r:paso:p3(2)-r]'
-zeros_ = zeros(length(traj_d2),1)
-traj_d2 = [zeros_+p2(1),traj_d2, zeros_]
+angulos = (pi/2:paso_ang:pi)';
+angulos = angulos(2:end,:);
+zeros_ = zeros(length(angulos),1);
+traj_s3 = [traj_d3(end,1) + r*cos(angulos),traj_d3(end,2)+ r*sin(angulos)-r,zeros_];
 
-angulos = (0:paso_rad:pi/2)'
-angulos = angulos(2:end,:)
-zeros_ = zeros(length(angulos),1)
-traj_s2 = [traj_d2(end,1) - r + r*cos(angulos),traj_d2(end,2)+ r*sin(angulos),zeros_]
+p4 = traj_s3(end,:) + [0 r 0];
+traj_d4 = [p4(2)-r:-paso:p1(2)+r- paso]';
+zeros_ = zeros(length(traj_d4),1);
+traj_d4 = [zeros_+p4(1),traj_d4, zeros_];
 
-p3 = traj_s2(end,:) + [r 0 0]
-traj_d3 = [p3(1)-r:-paso:p4(1)+r]'
-zeros_ = zeros(length(traj_d3),1)
-traj_d3 = [traj_d3, zeros_+p3(2), zeros_]
+angulos = (pi:paso_ang:3*pi/2)';
+angulos = angulos(2:end,:);
+zeros_ = zeros(length(angulos),1);
+traj_s4 = [traj_d4(end,1) + r*cos(angulos) + r, traj_d4(end,2)+ r*sin(angulos) ,zeros_];
 
-angulos = (pi/2:paso_rad:pi)'
-angulos = angulos(2:end,:)
-zeros_ = zeros(length(angulos),1)
-traj_s3 = [traj_d3(end,1) + r*cos(angulos),traj_d3(end,2)+ r*sin(angulos)-r,zeros_]
+trayectoria = [traj_d1; traj_s1; traj_d2; traj_s2; traj_d3; traj_s3; traj_d4; traj_s4];
 
-
-p4 = traj_s3(end,:) + [0 r 0]
-
-traj_d4 = [p4(2)-r:-paso:p1(2)+r- paso]'
-zeros_ = zeros(length(traj_d4),1)
-traj_d4 = [zeros_+p4(1),traj_d4, zeros_]
-
-angulos = (pi:paso_rad:3*pi/2)'
-angulos = angulos(2:end,:)
-zeros_ = zeros(length(angulos),1)
-traj_s4 = [traj_d4(end,1) + r*cos(angulos) + r, traj_d4(end,2)+ r*sin(angulos) ,zeros_]
-
-
-trayectoria = [traj_d1;
-    traj_s1;
-    traj_d2;
-    traj_s2;
-    traj_d3;
-    traj_s3;
-    traj_d4;
-    traj_s4];
+%Gráfica de la trayectoria resultante
 figure()
 scatter(trayectoria(:,1),trayectoria(:,2))
 xlabel("x [m]")
 ylabel("y [m]")
 title("Trayectoria planteada sobre el plano XY")
-% 3 
 
+% 3 
+%Cálculo de configuraciones 
 configuraciones = zeros(length(trayectoria),6);
 for i=1:length(trayectoria)
+    %Matriz de transformación de cada punto
     T= Tplano*transl(trayectoria(i,:));
+    %Configuración mediante cinemática inversa
     configuraciones(i,:) = robot_1.ikunc(T);
 end
 
+% Gráfica de configuraciones por viapoint
 figure()
 hold on
 for i=1:6
@@ -186,15 +180,10 @@ title("Configuraciones durante la trayectoria")
 
 
 %% Resultado
-
-configuraciones = zeros(length(trayectoria),6)
-puntos = zeros(length(trayectoria),3)
+puntos = zeros(length(trayectoria),3);
 for i=1:length(trayectoria)
-    T= transl(trayectoria(i,:));
-    T = Tplano*T;
-    conf = robot_1.ikunc(T);
-    puntos(i,:) = T(1:3,4)
-    configuraciones(i,:) = conf
+    T= Tplano*transl(trayectoria(i,:));
+    puntos(i,:) = T(1:3,4);
 end
 
 figure()
@@ -202,6 +191,7 @@ view([154,21])
 xlim([-2 1])
 ylim([-0.5 2])
 zlim([-1 1])
+
 hold on
 for i=1:length(configuraciones)  
     plot3(puntos(i,1),puntos(i,2),puntos(i,3),'c.')
