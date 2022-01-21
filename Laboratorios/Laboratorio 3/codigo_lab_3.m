@@ -21,9 +21,9 @@ robot_1.tool = A_tool;
 
 %% Parte 1 Trajectory planning
 %Definición del plano mediante una matriz de transformación
-Tplano = transl(-alcance/2,0.5*alcance,0.5)*trotx(-45,'deg')*troty(pi);
-
 alcance = 1.249;
+
+Tplano = transl(-alcance/2,0.5*alcance,0.5)*trotx(-45,'deg')*troty(pi);
 L_traj_1 = 0.4*alcance;
 L_traj_2 = 0.5*L_traj_1;
 
@@ -33,7 +33,10 @@ p3 = [L_traj_1 L_traj_2 0];
 p4 = [0 L_traj_2 0];
 
 %% Parte 2
-% Pose seleccionada: T1
+% Pose seleccionada: T1 (correspondiente al punto p1)
+
+T1 = Tplano*transl(p1);
+conf1 = robot_1.ikunc(T1);
 syms q1 q2 q3 q4 q5 q6
 assume([q1 q2 q3 q4 q5 q6],'real')
 A_0_1 = L(1).A(q1);
@@ -197,3 +200,28 @@ for i=1:length(configuraciones)
     plot3(puntos(i,1),puntos(i,2),puntos(i,3),'c.')
     robot_1.plot(configuraciones(i,:))
 end
+
+
+%% Velocidades articulares
+normV = 0.5; %m/s
+omega = [0;0;0];
+
+velocidades = zeros(length(configuraciones),6);
+
+for i = 1:length(velocidades)
+    if i == 60
+       vector = trayectoria(i,:) - trayectoria(i-1,:); 
+    else
+        
+        vector = trayectoria(i+1,:) - trayectoria(i,:);
+    end
+    vector = vector/norm(vector)
+    vel = normV*vector';
+    
+    conf = configuraciones(i,:);
+    J = robot_1.jacob0(conf);
+    
+    q_dot = J\[vel;omega];
+    velocidades(i,:) = q_dot';
+end
+
