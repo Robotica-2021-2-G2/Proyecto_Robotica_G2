@@ -95,10 +95,10 @@
 
           <div class="col-lg-6 d-flex flex-column justify-content-center" data-aos="fade-up" data-aos-delay="200">
             <div class="content">
-              <h3>Descripción del proyecto</h3>
-              <h2>Expedita voluptas omnis cupiditate totam eveniet nobis sint iste. Dolores est repellat corrupti reprehenderit.</h2>
+              <h3>Lógica</h3>
+              <h2>Definición de los TCPs de la herramienta</h2>
               <p>
-                Quisquam vel ut sint cum eos hic dolores aperiam. Sed deserunt et. Inventore et et dolor consequatur itaque ut voluptate sed et. Magnam nam ipsum tenetur suscipit voluptatum nam et est corrupti.
+                La herramienta tiene tres TCPs: dos de agarre y uno para expulsar refrigerante. Resultó necesario darles nombres a estos TCPs, particularmente a los dos de agarre con el objetivo de diferenciarlos y saber cuándo y por qué direccionar a determinado objetivo un TCP u otro. De esa manera, se definieron los TCP como se muestra. La herramienta de acople corresponde a aquella que toma las piezas para colocarlas en tornos, mientras que la herramienta de desacople retira las piezas de los tornos una vez fueron maquinadas.
               </p>
               <div class="text-center text-lg-start">
                 <a href="#" class="btn-read-more d-inline-flex align-items-center justify-content-center align-self-center">
@@ -110,7 +110,7 @@
           </div>
 
           <div class="col-lg-6 d-flex align-items-center" data-aos="zoom-out" data-aos-delay="200">
-            <iframe width="713" height="401" src="https://www.youtube.com/embed/av81-70O0m8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <img src="assets/img/TCPs.png" class="img-fluid" width="80%">
           </div>
 
         </div>
@@ -121,15 +121,17 @@
       <div class="container" data-aos="fade-up">
 
         <header class="section-header">
-          <h2>Resultados</h2>
-          <p>Laboriosam et omnis fuga quis dolor direda fara</p>
+          <h2>Lógica</h2>
+          <p>Variables clave para el proceso</p>
         </header>
 
 
         <div class="row">
 
-          <div class="col-lg-6">
-            <img src="assets/img/features.png" class="img-fluid" alt="">
+          <div class="col-lg-6 d-flex flex-column justify-content-center">
+            <p>
+              Las variables clave cumplen con el objetivo de permitir las comunicaciones entre la estación y el controlador del robot; comunicaciones que son necesarias para que el robot tome decisiones de las subrutinas que debe realizar.
+            </p>
           </div>
 
           <div class="col-lg-6 mt-5 mt-lg-0 d-flex">
@@ -138,64 +140,66 @@
               <div class="col-md-6" data-aos="zoom-out" data-aos-delay="200">
                 <div class="feature-box d-flex align-items-center">
                   <i class="bi bi-check"></i>
-                  <h3>Eos aspernatur rem</h3>
+                  <h3>Herramienta de acople activa</h3>
                 </div>
               </div>
 
               <div class="col-md-6" data-aos="zoom-out" data-aos-delay="300">
                 <div class="feature-box d-flex align-items-center">
                   <i class="bi bi-check"></i>
-                  <h3>Facilis neque ipsa</h3>
+                  <h3>Herramienta de desacople activa</h3>
                 </div>
               </div>
 
               <div class="col-md-6" data-aos="zoom-out" data-aos-delay="400">
                 <div class="feature-box d-flex align-items-center">
                   <i class="bi bi-check"></i>
-                  <h3>Volup amet voluptas</h3>
+                  <h3>Torno 1 tiene pieza</h3>
                 </div>
               </div>
 
               <div class="col-md-6" data-aos="zoom-out" data-aos-delay="500">
                 <div class="feature-box d-flex align-items-center">
                   <i class="bi bi-check"></i>
-                  <h3>Rerum omnis sint</h3>
+                  <h3>Torno 2 tiene pieza</h3>
                 </div>
-              </div>
-
-              <div class="col-md-6" data-aos="zoom-out" data-aos-delay="600">
-                <div class="feature-box d-flex align-items-center">
-                  <i class="bi bi-check"></i>
-                  <h3>Alias possimus</h3>
-                </div>
-              </div>
-
-              <div class="col-md-6" data-aos="zoom-out" data-aos-delay="700">
-                <div class="feature-box d-flex align-items-center">
-                  <i class="bi bi-check"></i>
-                  <h3>Repellendus mollitia</h3>
-                </div>
-              </div>
+              </div>            
 
             </div>
           </div>
 
-        </div> <!-- / row -->
+        </div>
+      
+
+        <br>
+      <div class="container" data-aos="fade-up">
+        <header class="section-header">
+          <h2>Lógica</h2>
+          <p>Diagrama de flujo</p>
+        </header>
+        <div class="row justify-content-center" data-aos="fade-up">
+            <img src="assets/img/Layout_celda.png" width="100%">              
+        </div>
+
+      </div> <!-- / row -->
         <!-- Feature Tabs -->
         <div class="row feture-tabs" data-aos="fade-up">
-          <div class="col-lg-6">
-            <h3>Neque officiis dolore maiores et exercitationem quae est seda lidera pat claero</h3>
+          <div class="col-lg-8">
+            <h3>Smart Components</h3>
 
             <!-- Tabs -->
             <ul class="nav nav-pills mb-3">
               <li>
-                <a class="nav-link active" data-bs-toggle="pill" href="#tab1">Saepe fuga</a>
+                <a class="nav-link active" data-bs-toggle="pill" href="#tab1">Tornos 1 y 2</a>
               </li>
               <li>
-                <a class="nav-link" data-bs-toggle="pill" href="#tab2">Voluptates</a>
+                <a class="nav-link" data-bs-toggle="pill" href="#tab2">Sensores de inicio</a>
               </li>
               <li>
-                <a class="nav-link" data-bs-toggle="pill" href="#tab3">Corrupti</a>
+                <a class="nav-link" data-bs-toggle="pill" href="#tab3">Sensores de llegada</a>
+              </li>
+              <li>
+                <a class="nav-link" data-bs-toggle="pill" href="#tab3">Eje externo de rotación</a>
               </li>
             </ul><!-- End Tabs -->
 
@@ -203,69 +207,33 @@
             <div class="tab-content">
 
               <div class="tab-pane fade show active" id="tab1">
-                <p>Consequuntur inventore voluptates consequatur aut vel et. Eos doloribus expedita. Sapiente atque consequatur minima nihil quae aspernatur quo suscipit voluptatem.</p>
-                <div class="d-flex align-items-center mb-2">
-                  <i class="bi bi-check2"></i>
-                  <h4>Repudiandae rerum velit modi et officia quasi facilis</h4>
-                </div>
-                <p>Laborum omnis voluptates voluptas qui sit aliquam blanditiis. Sapiente minima commodi dolorum non eveniet magni quaerat nemo et.</p>
-                <div class="d-flex align-items-center mb-2">
-                  <i class="bi bi-check2"></i>
-                  <h4>Incidunt non veritatis illum ea ut nisi</h4>
-                </div>
-                <p>Non quod totam minus repellendus autem sint velit. Rerum debitis facere soluta tenetur. Iure molestiae assumenda sunt qui inventore eligendi voluptates nisi at. Dolorem quo tempora. Quia et perferendis.</p>
+                <p>Los Smart Components de torno se encargaron de fijar las piezas cuando el robot las colocaba en su posición y de transmitirle al robot la información de si hay alguna pieza montada en ellos</p>
+                
               </div><!-- End Tab 1 Content -->
 
               <div class="tab-pane fade show" id="tab2">
-                <p>Consequuntur inventore voluptates consequatur aut vel et. Eos doloribus expedita. Sapiente atque consequatur minima nihil quae aspernatur quo suscipit voluptatem.</p>
-                <div class="d-flex align-items-center mb-2">
-                  <i class="bi bi-check2"></i>
-                  <h4>Repudiandae rerum velit modi et officia quasi facilis</h4>
-                </div>
-                <p>Laborum omnis voluptates voluptas qui sit aliquam blanditiis. Sapiente minima commodi dolorum non eveniet magni quaerat nemo et.</p>
-                <div class="d-flex align-items-center mb-2">
-                  <i class="bi bi-check2"></i>
-                  <h4>Incidunt non veritatis illum ea ut nisi</h4>
-                </div>
-                <p>Non quod totam minus repellendus autem sint velit. Rerum debitis facere soluta tenetur. Iure molestiae assumenda sunt qui inventore eligendi voluptates nisi at. Dolorem quo tempora. Quia et perferendis.</p>
+                <p>Los sensores de inicio le transmitían al robot las señales para deducir la próxima pieza que correspondía tomar.</p>
+                
               </div><!-- End Tab 2 Content -->
 
               <div class="tab-pane fade show" id="tab3">
-                <p>Consequuntur inventore voluptates consequatur aut vel et. Eos doloribus expedita. Sapiente atque consequatur minima nihil quae aspernatur quo suscipit voluptatem.</p>
-                <div class="d-flex align-items-center mb-2">
-                  <i class="bi bi-check2"></i>
-                  <h4>Repudiandae rerum velit modi et officia quasi facilis</h4>
-                </div>
-                <p>Laborum omnis voluptates voluptas qui sit aliquam blanditiis. Sapiente minima commodi dolorum non eveniet magni quaerat nemo et.</p>
-                <div class="d-flex align-items-center mb-2">
-                  <i class="bi bi-check2"></i>
-                  <h4>Incidunt non veritatis illum ea ut nisi</h4>
-                </div>
-                <p>Non quod totam minus repellendus autem sint velit. Rerum debitis facere soluta tenetur. Iure molestiae assumenda sunt qui inventore eligendi voluptates nisi at. Dolorem quo tempora. Quia et perferendis.</p>
+                <p>Los sensores de llegada le indicaban al robot el espacio disponible al que debía ir para soltar la pieza terminada</p>
+                
               </div><!-- End Tab 3 Content -->
 
+              <div class="tab-pane fade show" id="tab4">
+                <p>El eje externo de rotación tenía la función de rotar el mecanismo de garra giratoria cuando se colocara la pieza en él</p>
+                
+              </div><!-- End Tab 4 Content -->
+
             </div>
 
           </div>
 
-          <div class="col-lg-6">
-            <img src="assets/img/features-2.png" class="img-fluid" alt="">
-          </div>
+          
 
         </div><!-- End Feature Tabs -->
-<div class="content">
-              <h3>Descripción del proyecto</h3>
-              <h2>Expedita voluptas omnis cupiditate totam eveniet nobis sint iste. Dolores est repellat corrupti reprehenderit.</h2>
-              <p>
-                Quisquam vel ut sint cum eos hic dolores aperiam. Sed deserunt et. Inventore et et dolor consequatur itaque ut voluptate sed et. Magnam nam ipsum tenetur suscipit voluptatum nam et est corrupti.
-              </p>
-              <div class="text-center text-lg-start">
-                <a href="#" class="btn-read-more d-inline-flex align-items-center justify-content-center align-self-center">
-                  <span>Read More</span>
-                  <i class="bi bi-arrow-right"></i>
-                </a>
-              </div>
-            </div>
+
 
       </div>
 
